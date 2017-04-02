@@ -1,0 +1,119 @@
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
+from .models import User,UserDetail,Message,RoseRecord
+from django.contrib.auth import authenticate, login,logout
+from .forms import Login,SendMessage,Register
+from django.urls import reverse
+
+def index(request):
+    if request.user.is_authenticated:
+    	return HttpResponseRedirect(reverse('dil:dashboard',args=(request.user.username,)))
+    register = Register()
+    if request.method == 'POST':
+        form = Login(request.POST)
+        if form.is_valid():
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect(reverse('dil:dashboard',args=(username,)))
+            else :
+                return HttpResponseRedirect("Invalid Username or password")
+    else:
+        form = Login()
+    return render(request, 'dil/index.html',{'form':form,'register':register})
+
+def dashboard(request,username):
+    if request.user.is_authenticated:
+        user = get_object_or_404(User,username=username)
+    	user_details = get_object_or_404(UserDetail,user=user)
+    	ranked_list = UserDetail.objects.all().order_by('-red_rose')
+    	listed = []
+    	for x in ranked_list:
+        	temp_user = x.user
+        	listed.append(temp_user.username)
+    	message_list = user.to_user_profile.all()
+    	return render(request, 'dil/dashboard.html', {'user_details':user_details,'ranked_list':listed,'user_name':username,"message_list":message_list})
+    else:
+    	return HttpResponseRedirect(reverse('dil:index'))
+
+def red_rose_inc(request,username,profile):
+    if request.user.is_authenticated:
+        user = get_object_or_404(User,username=profile)
+    	user_details = get_object_or_404(UserDetail,user=user)
+    	frm_user= get_object_or_404(User,username=username)
+    	user_record = RoseRecord.objects.all()
+    	x = 1
+    	for record in user_record:
+    		if user== record.to:
+    			if frm_user== record.frm:
+    				x = 0
+    	if x == 1:
+    		user_details.red_rose=user_details.red_rose+1
+    		user_details.save()
+    		record = RoseRecord(to=user,frm=frm_user)
+    		record.save()
+    	return HttpResponseRedirect(reverse('dil:visit_profile', args=(username, profile)))
+    else:
+    	return HttpResponseRedirect(reverse('dil:index'))
+
+def yellow_rose_inc(request,username,profile):
+    if request.user.is_authenticated:
+        user = get_object_or_404(User,username=profile)
+    	user_details = get_object_or_404(UserDetail,user=user)
+    	user_details.yellow_rose=user_details.yellow_rose+1
+    	user_details.save()
+    	return HttpResponseRedirect(reverse('dil:visit_profile', args=(username, profile)))
+    else:
+    	return HttpResponseRedirect(reverse('dil:index'))
+
+def visit_profile(request,username,profile):
+    if request.user.is_authenticated:
+        user = get_object_or_404(User,username=username)
+    	user_details = get_object_or_404(UserDetail,user=user)
+    	visiting_user = get_object_or_404(User,username=profile)
+    	visiting_user_details = get_object_or_404(UserDetail,user=visiting_user)
+    	if visiting_user==user:
+    		return HttpResponseRedirect(reverse('dil:dashboard',args=(username,)))
+    	else:
+    		ranked_list = UserDetail.objects.all().order_by('-red_rose')
+    		if request.method == 'POST':
+        		form = SendMessage(request.POST)
+        		if form.is_valid():
+        			sent_message = Message(to=visiting_user, frm=user ,message=request.POST["message"])
+        			sent_message.save()
+        			return HttpResponseRedirect(reverse('dil:visit_profile', args=(username, profile)))
+    		else:
+        		form = SendMessage()
+    		listed = []
+    		for x in ranked_list:
+        		temp_user = x.user
+        		listed.append(temp_user.username)
+    		return render(request, 'dil/VisitProfile.html', {'visiting_user_details':visiting_user_details,'user_details':user_details,'ranked_list':listed,'user_name':username,'profile_user':profile,'form':form})
+    else:
+    	return HttpResponseRedirect(reverse('dil:index'))
+
+def register(request):
+	if request.method == 'POST':
+		form = Register(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            email = form.cleaned_data['email']
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            branch = form.cleaned_data['branch']
+            year = form.cleaned_data['year']
+            dob = form.cleaned_data['dob']
+            user = User(username=username,password=password,email=email,first_name=first_name,last_name=last_name)
+            user.save()
+            user_details = UserDetail(user=user,dob=dob,branch=branch,year=year)
+            user_details.save()
+            login(request, user)
+            return HttpResponseRedirect(reverse('dil:dashboard',args=(username,)))
+	return HttpResponseRedirect(reverse('dil:index'))
+
+def Logout(request):
+	logout(request)
+	return HttpResponseRedirect(reverse('dil:index'))

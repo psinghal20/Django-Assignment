@@ -1,0 +1,33 @@
+<html>
+<head>
+	<title>{{user_name}}</title>
+</head>
+<body>
+<div id="logout">
+	<a href="{% url 'dil:logout'%}">logout</a>
+</div>
+<div id="LeaderBoard" style="height: 100%;width: 30%;float: left">
+	<ol>
+		{% for user in ranked_list %}
+			<li><a href="{% url 'dil:visit_profile' user_name user %}">{{user}}</a></li>
+		{% endfor %}
+	</ol>
+</div>
+<div id="profile" style="width:35%;">
+	{{ profile_user }}
+	<p>
+		Red Roses - {{visiting_user_details.red_rose}}
+		Yellow Roses - {{visiting_user_details.yellow_rose}}
+	</p>
+</div>
+<div>
+	<a href="{% url 'dil:red_inc' user_name profile_user%}">inc red</a>
+	<a href="{% url 'dil:yellow_inc' user_name profile_user%}">inc yellow</a>
+</div>
+<div>
+	<form action="{% url 'dil:visit_profile' user_name profile_user%}" method="post">
+		{% csrf_token %}
+		{{ form }}
+		<input type="submit" name="submit" >
+	</form>
+</div>

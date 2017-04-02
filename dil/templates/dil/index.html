@@ -1,0 +1,23 @@
+<html>
+<head>
+	<title>Connect-E-Dil</title>
+</head>
+<body>
+<h1>Welcome!</h1>
+<div>
+<p style="text-align: center;">LOGIN</p>
+<form action="{% url 'dil:index' %}" method="post">
+	{% csrf_token %}
+	{{form}}
+	<input type="submit" name="submit">
+</form>
+</div>
+<div id="register">
+	<form action="{% url 'dil:register' %}" method="post">
+		{% csrf_token %}
+		{{ register }}
+		<input type="submit" name="submit">
+	</form>
+</div>
+</body>
+</html>
