@@ -21,13 +21,17 @@ def index(request):
                 login(request, user)
                 return HttpResponseRedirect(reverse('dil:dashboard',args=(username,)))
             else :
-                return HttpResponseRedirect("Invalid Username or password")
+            	form = Login()
+                return render(request,'dil/index.html',{'form':form,'error_message':"Invalid Username/Password",'register':register})
     else:
         form = Login()
     return render(request, 'dil/index.html',{'form':form,'register':register})
 
 def dashboard(request,username):
     if request.user.is_authenticated:
+    	if hasattr(request.user,'userdetail')!=True:
+    		logout(request)
+    		return HttpResponseRedirect(reverse('dil:index'))
         user = get_object_or_404(User,username=username)
     	user_details = get_object_or_404(UserDetail,user=user)
     	ranked_list = UserDetail.objects.all().order_by('-red_rose')
