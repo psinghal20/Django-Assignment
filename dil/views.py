@@ -101,6 +101,7 @@ def visit_profile(request,username,profile):
     		for x in ranked_list:
         		temp_user = x.user
         		listed.append(temp_user.username)
+        	message_list = Message.objects.filter(to=visiting_user_details,frm=user)
     		return render(request, 'dil/VisitProfile.html', {'visiting_user_details':visiting_user_details,'user_details':user_details,'ranked_list':listed,'user_name':username,'profile_user':profile,'form':form})
     else:
     	return HttpResponseRedirect(reverse('dil:index'))
