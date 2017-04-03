@@ -4,6 +4,7 @@ from .models import User,UserDetail,Message,RoseRecord,YellowRoseRecord
 from django.contrib.auth import authenticate, login,logout
 from .forms import Login,SendMessage,Register
 from django.urls import reverse
+from itertools import chain
 
 def index(request):
     if request.user.is_authenticated:
@@ -101,8 +102,11 @@ def visit_profile(request,username,profile):
     		for x in ranked_list:
         		temp_user = x.user
         		listed.append(temp_user.username)
-        	message_list = Message.objects.filter(to=visiting_user_details,frm=user)
-    		return render(request, 'dil/VisitProfile.html', {'visiting_user_details':visiting_user_details,'user_details':user_details,'ranked_list':listed,'user_name':username,'profile_user':profile,'form':form})
+        	sent_message_list = Message.objects.filter(to=visiting_user,frm=user)
+    		received_message_list = Message.objects.filter(frm=visiting_user,to=user)
+    		result_list = list(chain(sent_message_list,received_message_list))
+    		result_list = sorted(result_list)
+    		return render(request, 'dil/VisitProfile.html', {'visiting_user_details':visiting_user_details,'user_details':user_details,'ranked_list':listed,'user_name':username,'profile_user':profile,'form':form,'result_list':result_list})
     else:
     	return HttpResponseRedirect(reverse('dil:index'))
 
