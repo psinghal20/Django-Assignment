@@ -29,7 +29,7 @@ def index(request):
 
 def dashboard(request,username):
     if request.user.is_authenticated:
-    	if hasattr(request.user,'userdetail')!=True:
+    	if request.user.is_staff:
     		logout(request)
     		return HttpResponseRedirect(reverse('dil:index'))
         user = get_object_or_404(User,username=username)

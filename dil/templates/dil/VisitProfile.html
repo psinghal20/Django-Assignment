@@ -20,10 +20,19 @@
 	</p>
 	<a href="{% url 'dil:red_inc' user_name profile_user%}">inc red</a><br>
 	<a href="{% url 'dil:yellow_inc' user_name profile_user%}">inc yellow</a><br><hr>
+	
 	{% for msg in result_list %}
-		From:{{msg.frm}}<br>
-		Time:{{msg.sent_time}}<br>
-		{{msg.message}}<br><hr>
+		{% if msg.frm.username == user_name %}
+			<p style="text-align:right;">
+			Time:{{msg.sent_time}}<br>
+			{{msg.message}}<br>
+			</p><hr>
+		{% elif msg.frm.username == profile_user %}
+			<p>
+			Time:{{msg.sent_time}}<br>
+			{{msg.message}}<br>
+			</p><hr>
+		{% endif %}
 	{% endfor %}
 <div>
 	<form action="{% url 'dil:visit_profile' user_name profile_user%}" method="post">
