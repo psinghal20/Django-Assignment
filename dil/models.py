@@ -25,3 +25,8 @@ class RoseRecord(models.Model):
 	frm = models.ForeignKey(User, related_name='from_user')
 	def __str__(self):
 		return self.to.username
+class YellowRoseRecord(models.Model):
+	to = models.ForeignKey(User, related_name='to_user_yellow')
+	frm = models.ForeignKey(User, related_name='from_user_yellow')
+	def __str__(self):
+		return self.to.username

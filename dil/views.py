@@ -1,13 +1,14 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import User,UserDetail,Message,RoseRecord
+from .models import User,UserDetail,Message,RoseRecord,YellowRoseRecord
 from django.contrib.auth import authenticate, login,logout
 from .forms import Login,SendMessage,Register
 from django.urls import reverse
 
 def index(request):
     if request.user.is_authenticated:
-    	return HttpResponseRedirect(reverse('dil:dashboard',args=(request.user.username,)))
+    	if hasattr(request.user,'userdetail'):
+    		return HttpResponseRedirect(reverse('dil:dashboard',args=(request.user.username,)))
     register = Register()
     if request.method == 'POST':
         form = Login(request.POST)
@@ -62,8 +63,18 @@ def yellow_rose_inc(request,username,profile):
     if request.user.is_authenticated:
         user = get_object_or_404(User,username=profile)
     	user_details = get_object_or_404(UserDetail,user=user)
-    	user_details.yellow_rose=user_details.yellow_rose+1
-    	user_details.save()
+    	frm_user= get_object_or_404(User,username=username)
+    	user_record = YellowRoseRecord.objects.all()
+    	x = 1
+    	for record in user_record:
+    		if user== record.to:
+    			if frm_user== record.frm:
+    				x = 0
+    	if x == 1:
+    		user_details.yellow_rose=user_details.yellow_rose+1
+    		user_details.save()
+    		record = YellowRoseRecord(to=user,frm=frm_user)
+    		record.save()
     	return HttpResponseRedirect(reverse('dil:visit_profile', args=(username, profile)))
     else:
     	return HttpResponseRedirect(reverse('dil:index'))
