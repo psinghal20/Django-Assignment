@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
 
 class UserDetail(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True,)
@@ -17,6 +18,7 @@ class Message(models.Model):
 	to = models.ForeignKey(User, related_name='to_user_profile')
 	frm = models.ForeignKey(User, related_name='from_user_profile')
 	message = models.CharField(max_length=1000)
+	sent_time = models.DateTimeField(auto_now_add=True,null=True)
 	def __str__(self):
 		return self.message
 
