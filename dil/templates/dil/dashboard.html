@@ -3,28 +3,23 @@
 	<title>Dashboard</title>
 </head>
 <body>
-<div id="logout">
-	<a href="{% url 'dil:logout'%}">logout</a>
-</div>
-<div id="LeaderBoard" style="height: 100%;width: 30%;float: left">
+	<a href="{% url 'dil:logout'%}">logout</a><br>
 	<ol>
 		{% for user in ranked_list %}
 			<li><a href="{% url 'dil:visit_profile' user_name user %}">{{user}}</a></li>
 		{% endfor %}
-	</ol>
-</div>
-<div id="profile" style="width:35%;">
-	{{ user_name }}
+	</ol><br><hr>
+	
+	<h1>{{ user_name }}</h1><br>
 	<p>
-		Red Roses - {{user_details.red_rose}}
+		Red Roses - {{user_details.red_rose}}<br>
 		Yellow Roses - {{user_details.yellow_rose}}
-	</p>
-</div>
-<div id="messages">
+	</p><hr>
+
 	{% for messages in message_list %}
-	{{ messages.frm }}
-	{{ messages.message }}
-	{% endfor %}
-</div>
+		From:{{ messages.frm }}<br>
+		Time:{{messages.sent_time}}<br>
+		message:{{ messages.message }}<br><hr>
+	{% endfor %}	
 </body>
 </html>
