@@ -9,7 +9,7 @@
 </div>
 	<ol>
 		{% for user in ranked_list %}
-			<li><a href="{% url 'dil:visit_profile' user_name user %}">{{user}}</a></li>
+			<li><a href="{% url 'dil:visit_profile' user %}">{{user}}</a></li>
 		{% endfor %}
 	</ol>
 
@@ -18,8 +18,8 @@
 		Red Roses - {{visiting_user_details.red_rose}}
 		Yellow Roses - {{visiting_user_details.yellow_rose}}
 	</p>
-	<a href="{% url 'dil:red_inc' user_name profile_user%}">inc red</a><br>
-	<a href="{% url 'dil:yellow_inc' user_name profile_user%}">inc yellow</a><br><hr>
+	<a href="{% url 'dil:red_inc' profile_user%}">inc red</a><br>
+	<a href="{% url 'dil:yellow_inc' profile_user%}">inc yellow</a><br><hr>
 	
 	{% for msg in result_list %}
 		{% if msg.frm.username == user_name %}
@@ -35,7 +35,7 @@
 		{% endif %}
 	{% endfor %}
 <div>
-	<form action="{% url 'dil:visit_profile' user_name profile_user%}" method="post">
+	<form action="{% url 'dil:visit_profile' profile_user%}" method="post">
 		{% csrf_token %}
 		{{ form }}
 		<input type="submit" name="submit" >

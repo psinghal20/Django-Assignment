@@ -6,7 +6,7 @@
 	<a href="{% url 'dil:logout'%}">logout</a><br>
 	<ol>
 		{% for user in ranked_list %}
-			<li><a href="{% url 'dil:visit_profile' user_name user %}">{{user}}</a></li>
+			<li><a href="{% url 'dil:visit_profile' user %}">{{user}}</a></li>
 		{% endfor %}
 	</ol><br><hr>
 	
