@@ -16,7 +16,11 @@ def index(request):
         if form.is_valid():
             username = request.POST['username']
             password = request.POST['password']
+            print password
+            print username
             user = authenticate(username=username, password=password)
+            print user
+            print
             if user is not None:
                 login(request, user)
                 return HttpResponseRedirect(reverse('dil:dashboard',args=(username,)))
@@ -126,8 +130,7 @@ def register(request):
             branch = form.cleaned_data['branch']
             year = form.cleaned_data['year']
             dob = form.cleaned_data['dob']
-            user = User(username=username,password=password,email=email,first_name=first_name,last_name=last_name)
-            user.save()
+            user = User.objects.create_user(username=form.cleaned_data['username'],password=form.cleaned_data['password'],email=form.cleaned_data['email'])
             user_details = UserDetail(user=user,dob=dob,branch=branch,year=year)
             user_details.save()
             login(request, user)
@@ -137,3 +140,5 @@ def register(request):
 def Logout(request):
 	logout(request)
 	return HttpResponseRedirect(reverse('dil:index'))
+
+    #'dil.apps.DilConfig',
