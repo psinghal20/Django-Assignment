@@ -16,10 +16,8 @@ def index(request):
         if form.is_valid():
             username = request.POST['username']
             password = request.POST['password']
-            print password
             user = authenticate(username=username, password=password)
-            print user
-            if user is not None:
+           if user is not None:
                 login(request, user)
                 return HttpResponseRedirect(reverse('dil:dashboard'))
             else :
@@ -125,8 +123,7 @@ def register(request):
             branch = form.cleaned_data['branch']
             year = form.cleaned_data['year']
             dob = form.cleaned_data['dob']
-            print password
-            user = User.objects.create_user(username=username,password=password,email=email,first_name=first_name,last_name=last_name)
+            #user = User.objects.create_user(username=username,password=password,email=email,first_name=first_name,last_name=last_name)
             user_details = UserDetail(user=user,dob=dob,branch=branch,year=year)
             user_details.save()
             login(request,user)
